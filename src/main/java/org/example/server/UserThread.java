@@ -41,6 +41,14 @@ public class UserThread extends Thread{
                 try {
                     while (true){
                         Packet packet = (Packet) objectInput.readObject();
+                        switch (packet.getRequestType()){
+                            case "SetUsername":
+                                setUsername(packet.getFromUsername());
+                                break;
+
+                            case "DirectMessage":
+
+                        }
                     }
 
                 } catch (ClassNotFoundException e){
