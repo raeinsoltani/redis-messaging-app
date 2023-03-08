@@ -1,6 +1,7 @@
-package org.example;
+package org.example.server;
 
-import javax.imageio.IIOException;
+import org.example.common.Packet;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -10,6 +11,8 @@ public class UserThread extends Thread{
     private ObjectOutput objectOutput;
     private ObjectInput objectInput;
     private String username;
+
+
 
     public UserThread(Socket socket){
         try{
@@ -22,22 +25,34 @@ public class UserThread extends Thread{
         }
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     @Override
     public void run() {
-        Thread sender = new Thread(new Runnable() {
+        Thread receiver = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     while (true){
                         Packet packet = (Packet) objectInput.readObject();
-                        //write code to analatzie the packet
                     }
 
                 } catch (ClassNotFoundException e){
                     e.printStackTrace();
                 }
                 catch (SocketException e){
-                    //remove clientHandler from ClientHandlers
+                    for(UserThread client : Server.getClients()){
+                        if (client.getUsername().equals(username)){
+                            Server.getClients().remove(client);
+                            break;
+                        }
+                    }
                 }
                 catch (IOException e){
                     e.printStackTrace();
