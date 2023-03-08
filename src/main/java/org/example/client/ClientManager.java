@@ -13,10 +13,9 @@ public class ClientManager {
     private int port;
     private String username;
 
-    public ClientManager(String ip, int port ,String username) {
+    public ClientManager(String ip, int port) {
         this.ip = ip;
         this.port = port;
-        this.username = username;
     }
 
     public void start(){
@@ -30,20 +29,22 @@ public class ClientManager {
 
             Scanner scanner = new Scanner(System.in);
             System.out.println("Please enter username:");
+            username = scanner.nextLine();
             Packet packet = new Packet();
             packet.setRequestType("SetUsername");
-            packet.setFromUsername(scanner.nextLine());
+            packet.setFromUsername(username);
             outputStream.writeObject(packet);
             while (true){
+                Packet packet1 = new Packet();
                 System.out.println("To(username)");
                 String toUsername = scanner.nextLine();
                 System.out.println("Write your message:");
                 String body = scanner.nextLine();
-                packet.setRequestType("DirectMessage");
-                packet.setFromUsername(username);
-                packet.setToUsername(toUsername);
-                packet.setBody(body);
-                outputStream.writeObject(packet);
+                packet1.setRequestType("DirectMessage");
+                packet1.setFromUsername(username);
+                packet1.setToUsername(toUsername);
+                packet1.setBody(body);
+                outputStream.writeObject(packet1);
             }
 
 

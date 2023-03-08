@@ -49,13 +49,16 @@ public class UserThread extends Thread{
                 try {
                     while (true){
                         Packet packet = (Packet) objectInput.readObject();
-                        switch (packet.getRequestType()){
-                            case "SetUsername":
+                        switch (packet.getRequestType()) {
+                            case "SetUsername" -> {
                                 setUsername(packet.getFromUsername());
-                                break;
+                                System.out.println("client username set as: " + packet.getFromUsername());
+                            }
 
-                            case "DirectMessage":
+                            case "DirectMessage" -> {
+                                System.out.println(6);
                                 Server.sendReceivedMessageToServer(packet);
+                            }
                         }
                     }
 
@@ -75,6 +78,7 @@ public class UserThread extends Thread{
                 }
             }
         });
+        receiver.run();
     }
 }
 

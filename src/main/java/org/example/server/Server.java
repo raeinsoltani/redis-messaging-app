@@ -29,6 +29,7 @@ public class Server {
             System.out.println("server is running on port :" + port);
             while (true) {
                 Socket socket = serverSocket.accept();
+                System.out.println("new client connected");
                 UserThread userThread = new UserThread(socket);
                 Thread thread = new Thread(userThread);
                 thread.start();
@@ -43,7 +44,7 @@ public class Server {
         for (UserThread client : clients){
             if (client.getUsername().equals(packet.getToUsername())){
                 client.sendReceivedMessageToClientApplication(packet);
-                System.out.println("Relaying a Message\nform: " + packet.getFromUsername()
+                System.out.println("\nRelaying a Message\nform: " + packet.getFromUsername()
                         + "\nto: " + packet.getToUsername() + "\n\n" + packet.getBody() + "\n");
                 break;
             }
