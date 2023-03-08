@@ -11,6 +11,12 @@ public class Packet implements Serializable {
 
     private String body;
 
+    public Packet(String requestType) {
+        this.requestType = requestType;
+    }
+
+    public Packet(){};
+
     public String getBody() {
         return body;
     }
