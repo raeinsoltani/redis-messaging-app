@@ -9,6 +9,16 @@ public class Packet implements Serializable {
 
     private String toUsername;
 
+    private String body;
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
     public String getFromUsername() {
         return fromUsername;
     }

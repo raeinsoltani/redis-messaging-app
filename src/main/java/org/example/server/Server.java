@@ -1,5 +1,7 @@
 package org.example.server;
 
+import org.example.common.Packet;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -37,4 +39,14 @@ public class Server {
         }
     }
 
+    public static void sendReceivedMessageToServer(Packet packet){
+        for (UserThread client : clients){
+            if (client.getUsername().equals(packet.getToUsername())){
+                client.sendReceivedMessageToClientApplication(packet);
+                System.out.println("Relaying a Message\nform: " + packet.getFromUsername()
+                        + "\nto: " + packet.getToUsername() + "\n\n" + packet.getBody() + "\n");
+                break;
+            }
+        }
+    }
 }

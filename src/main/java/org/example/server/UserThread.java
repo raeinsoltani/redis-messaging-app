@@ -33,6 +33,14 @@ public class UserThread extends Thread{
         this.username = username;
     }
 
+    public void sendReceivedMessageToClientApplication(Packet packet){
+        try {
+            objectOutput.writeObject(packet);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void run() {
         Thread receiver = new Thread(new Runnable() {
@@ -47,7 +55,7 @@ public class UserThread extends Thread{
                                 break;
 
                             case "DirectMessage":
-
+                                Server.sendReceivedMessageToServer(packet);
                         }
                     }
 
