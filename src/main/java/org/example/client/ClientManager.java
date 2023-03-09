@@ -86,6 +86,7 @@ public class ClientManager {
             members.add(member);
         }
         packet.setMembers(members);
+        packet.setFromUsername(username);
 
         try {
             outputStream.writeObject(packet);
@@ -93,5 +94,25 @@ public class ClientManager {
             throw new RuntimeException(e);
         }
         System.out.println("\nGroup Creation Request Sent\n");
+    }
+
+    public void sendMessageToGroup(){
+        Packet packet = new Packet();
+
+        packet.setRequestType("SendGroupMsg");
+        packet.setFromUsername(username);
+
+        System.out.println("enter name of the group you what to send message to: ");
+        packet.setToUsername(scanner.nextLine());
+
+        System.out.println("Please enter your Message: ");
+        packet.setBody(scanner.nextLine());
+
+        try {
+            outputStream.writeObject(packet);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("\nMessage sent\n");
     }
 }
