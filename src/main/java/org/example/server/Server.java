@@ -1,15 +1,19 @@
 package org.example.server;
 
 import org.example.common.Packet;
+import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class Server {
     private final int port;
     private static ConcurrentLinkedDeque<UserThread> clients = new ConcurrentLinkedDeque<>();
+    private static Jedis jedis;
 
     public Server(int port){
         this.port = port;
@@ -24,6 +28,9 @@ public class Server {
     }
 
     public void startServer() {
+
+        jedis = new Jedis();
+
         try {
             ServerSocket serverSocket = new ServerSocket(port);
             System.out.println("server is running on port :" + port);
@@ -44,10 +51,24 @@ public class Server {
         for (UserThread client : clients){
             if (client.getUsername().equals(packet.getToUsername())){
                 client.sendReceivedMessageToClientApplication(packet);
-                System.out.println("\nRelaying a Message\nform: " + packet.getFromUsername()
+                System.out.println("\nfRelaying a Message\nform: " + packet.getFromUsername()
                         + "\nto: " + packet.getToUsername() + "\n\n" + packet.getBody() + "\n");
                 break;
             }
         }
     }
+
+    public static void createGroup(Packet packet){
+        HashMap<String, String> group = new HashMap<>();
+
+        group.put("creator", packet.getFromUsername());
+        group.put("created_at", packet.getDateTime().toString());
+        group.put("description", packet.getDescription());
+        group.put("members", String.join(" ", packet.getMembers()));
+        group.put("messages", "");
+
+        jedis.hset(packet.getToUsername(), group);
+        System.out.println("Group " + packet.getToUsername() + "created by: " + packet.getFromUsername());
+    }
+
 }

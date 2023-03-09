@@ -1,6 +1,8 @@
 package org.example.common;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class Packet implements Serializable {
     private String requestType;
@@ -11,11 +13,21 @@ public class Packet implements Serializable {
 
     private String body;
 
+    private LocalDateTime dateTime;
+
+    private ArrayList<String> members;
+
+    private String description;
+
+
+
     public Packet(String requestType) {
         this.requestType = requestType;
     }
 
-    public Packet(){};
+    public Packet(){
+        this.dateTime = LocalDateTime.now();
+    };
 
     public String getBody() {
         return body;
@@ -47,5 +59,25 @@ public class Packet implements Serializable {
 
     public void setRequestType(String requestType) {
         this.requestType = requestType;
+    }
+
+    public ArrayList<String> getMembers() {
+        return members;
+    }
+
+    public void setMembers(ArrayList<String> members) {
+        this.members = members;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
     }
 }

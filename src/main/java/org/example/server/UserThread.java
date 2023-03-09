@@ -56,8 +56,11 @@ public class UserThread extends Thread{
                             }
 
                             case "DirectMessage" -> {
-                                System.out.println(6);
                                 Server.sendReceivedMessageToServer(packet);
+                            }
+
+                            case "CreateGroup" ->{
+                                Server.createGroup(packet);
                             }
                         }
                     }
