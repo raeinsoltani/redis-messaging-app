@@ -1,7 +1,11 @@
 package org.example.server;
 
 import org.example.common.Packet;
+import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPooled;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -12,7 +16,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 public class Server {
     private final int port;
     private static ConcurrentLinkedDeque<UserThread> clients = new ConcurrentLinkedDeque<>();
-    private static Jedis jedis;
+    private static JedisPooled jedis;
 
     public Server(int port){
         this.port = port;
@@ -26,10 +30,21 @@ public class Server {
         Server.clients = clients;
     }
 
-    public void startServer() {
+    public void startServer(String dbURL, int dbPort) {
 
-        jedis = new Jedis();
+        jedis = new JedisPooled(dbURL, dbPort);
 
+//        JedisPool pool = new JedisPool(dbURL, dbPort);
+//        try {
+//            Jedis jedis = pool.getResource();
+//            // Is connected
+//            System.out.println("db is connected");
+//        } catch (JedisConnectionException e) {
+//            // Not connected
+//            System.out.println("db is not connected");
+//        }
+
+        System.out.println("DB is ready on port:" + dbPort);
         try {
             ServerSocket serverSocket = new ServerSocket(port);
             System.out.println("server is running on port :" + port);
@@ -49,9 +64,13 @@ public class Server {
     public static void sendReceivedMessageToServer(Packet packet){
         for (UserThread client : clients){
             if (client.getUsername().equals(packet.getTo())){
+                String messages = jedis.get(packet.getTo());
+                messages = messages + "!!!!!" + packet.getDateTime().toString() + "@@@@@" + packet.getFrom() + "@@@@@" + packet.getBody();
+                jedis.set(packet.getTo(), messages);
                 client.sendReceivedMessageToClientApplication(packet);
-                System.out.println("\nfRelaying a Message\nform: " + packet.getFrom()
-                        + "\nto: " + packet.getTo() + "\n\n" + packet.getBody() + "\n");
+                System.out.println("\nDirect Message\nform: " + packet.getFrom()
+                        + "\n\n" + packet.getBody() + "\n");
+                System.out.println("Message uploaded to database");
                 break;
             }
         }
@@ -64,16 +83,20 @@ public class Server {
         group.put("created_at", packet.getDateTime().toString());
         group.put("description", packet.getDescription());
         group.put("members", String.join(" ", packet.getMembers()));
+        System.out.println(String.join(" ", packet.getMembers()));
         group.put("messages", "");
 
+        System.out.println("Jedis Hash Set sending");
         jedis.hset(packet.getTo(), group);
-        System.out.println("Group " + packet.getTo() + "created by: " + packet.getFrom());
+        System.out.println(packet.getTo());
+        System.out.println("Group " + packet.getTo() + " created by " + packet.getFrom());
     }
 
     public static void sendGroupMsg(Packet packet){
         HashMap<String, String> group = (HashMap<String, String>) jedis.hgetAll(packet.getTo());
         System.out.println("retrieved group information form database");
 
+        System.out.println(packet.getTo());
         String messages = group.get("messages");
         messages = messages + "!!!!!" + packet.getDateTime().toString() + "@@@@@" + packet.getFrom() + "@@@@@" + packet.getBody();
         System.out.println(messages);
@@ -81,6 +104,8 @@ public class Server {
         jedis.hset(packet.getTo(), group);
         System.out.println("uploaded new group messages to database");
 
+//        System.out.println(group.get("members"));
+//        System.out.println(group.get("description"));
         broadcast(group.get("members"), packet);
     }
 
@@ -88,8 +113,7 @@ public class Server {
         String[] membersArray = members.split(" ");
         for (String member : membersArray){
             for (UserThread client : clients){
-                if (client.getUsername().equals(member)){
-                    packet.setDescription("DisplayGroupMsg");
+                if (client.getUsername().equals(member) && !client.getUsername().equals(packet.getFrom())){
                     client.sendReceivedMessageToClientApplication(packet);
                 }
             }

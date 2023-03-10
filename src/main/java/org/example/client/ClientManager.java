@@ -36,7 +36,7 @@ public class ClientManager {
             login();
 
             while(true){
-                System.out.println("To:\n1)Send Direct Message\n2)Send Group Message\n3)Create Group");
+                System.out.println("Switch:\n1)Send Direct Message\n2)Send Group Message\n3)Create Group\n");
                 switch (scanner.nextLine()){
                     case "1" -> {
                         sendDirectMsg();
@@ -68,7 +68,7 @@ public class ClientManager {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("\nUsername set\nWelcome" + username + "\n");
+        System.out.println("\nUsername set\nWelcome: " + username + "\n");
     }
 
     public void createGroup(){

@@ -25,7 +25,7 @@ public class Listener implements Runnable{
 
                     }
 
-                    case "DisplayGroupMsg" ->{
+                    case "SendGroupMsg" ->{
                         System.out.println("Group: " + packet.getTo() + "    From: "+ packet.getFrom());
                         System.out.println(packet.getBody() + "\n");;
                     }
