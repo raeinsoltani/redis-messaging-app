@@ -64,7 +64,7 @@ public class UserThread extends Thread{
                             }
 
                             case "SendGroupMsg" ->{
-                                Server.
+                                Server.sendGroupMsg(packet);
                             }
                         }
                     }

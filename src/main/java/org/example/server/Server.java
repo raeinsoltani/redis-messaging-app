@@ -78,7 +78,7 @@ public class Server {
         System.out.println(messages);
         group.replace("messages", messages);
 
-
+        broadcast(group.get("members"), packet);
     }
 
     public static void broadcast(String members, Packet packet){

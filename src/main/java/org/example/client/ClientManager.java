@@ -31,22 +31,7 @@ public class ClientManager {
             Listener listener = new Listener(new ObjectInputStream(socket.getInputStream()));
             Thread listenerThread = new Thread(listener);
             listenerThread.start();
-
             scanner = new Scanner(System.in);
-
-            while (true){
-                Packet packet1 = new Packet();
-                System.out.println("To(username)");
-                String toUsername = scanner.nextLine();
-                System.out.println("Write your message:");
-                String body = scanner.nextLine();
-                packet1.setRequestType("DirectMessage");
-                packet1.setFrom(username);
-                packet1.setTo(toUsername);
-                packet1.setBody(body);
-                outputStream.writeObject(packet1);
-            }
-
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -114,5 +99,24 @@ public class ClientManager {
             throw new RuntimeException(e);
         }
         System.out.println("\nMessage sent\n");
+    }
+
+    public void sendDirectMsg(){
+        scanner = new Scanner(System.in);
+        Packet packet = new Packet();
+        System.out.println("To(username)");
+        String toUsername = scanner.nextLine();
+        System.out.println("Write your message:");
+        String body = scanner.nextLine();
+        packet.setRequestType("DirectMessage");
+        packet.setFrom(username);
+        packet.setTo(toUsername);
+        packet.setBody(body);
+        try {
+            outputStream.writeObject(packet);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("Message Sent");
     }
 }
