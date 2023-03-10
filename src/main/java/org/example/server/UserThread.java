@@ -67,8 +67,12 @@ public class UserThread extends Thread{
                                 Server.sendGroupMsg(packet);
                             }
 
-                            case "PrintMsgHistory" ->{
-                                Server.printMsgHistory(packet);
+                            case "PrintMsgHistoryUser" ->{
+                                Server.printDirectMsgHistory(packet);
+                            }
+
+                            case "PrintMsgHistoryGroup" ->{
+                                Server.printGroupMsgHistory(packet);
                             }
                         }
                     }

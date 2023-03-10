@@ -119,7 +119,7 @@ public class Server {
         }
     }
 
-    public static void printMsgHistory(Packet packet){
+    public static void printDirectMsgHistory(Packet packet){
         String msg = jedis.get(packet.getTo());
         for (UserThread client : clients){
             if (client.getUsername().equals(packet.getFrom())){
@@ -131,4 +131,16 @@ public class Server {
         }
     }
 
+    public static void printGroupMsgHistory(Packet packet){
+        HashMap<String, String> hashMap = (HashMap<String, String>) jedis.hgetAll(packet.getTo());
+        String msg = hashMap.get("messages");
+        for (UserThread client : clients){
+            if (client.getUsername().equals(packet.getFrom())){
+                Packet newPacket = new Packet();
+                newPacket.setRequestType("PrintMsgHistory");
+                newPacket.setBody(msg);
+                client.server2ClientPacketSender(newPacket);
+            }
+        }
+    }
 }

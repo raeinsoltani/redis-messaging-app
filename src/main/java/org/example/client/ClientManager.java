@@ -144,19 +144,38 @@ public class ClientManager {
     }
 
     public void printChatHistory(){
-        System.out.println("Please enter username or chatID of group you\n" +
-                "what to retrieve information from: ");
+        System.out.println("Do you want to print chat history of a group or direct message?\n" +
+                "1)Direct\n" +
+                "2)Group\n");
         scanner = new Scanner(System.in);
-        String requestedUser = scanner.nextLine();
 
-        Packet packet = new Packet();
-        packet.setRequestType("PrintMsgHistory");
-        packet.setFrom(username);
-        packet.setTo(requestedUser);
-        try {
-            outputStream.writeObject(packet);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        switch (scanner.nextLine()){
+            case "1" -> {
+                Packet packet = new Packet();
+                packet.setRequestType("PrintMsgHistoryUser");
+                packet.setFrom(username);
+                packet.setTo(username);
+                try {
+                    outputStream.writeObject(packet);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            case "2" ->{
+                System.out.println("What is the ID of the group you want to print from?");
+                String requestedUser = scanner.nextLine();
+                Packet packet = new Packet();
+                packet.setRequestType("PrintMsgHistoryGroup");
+                packet.setFrom(username);
+                packet.setTo(requestedUser);
+                try {
+                    outputStream.writeObject(packet);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
         }
     }
 
