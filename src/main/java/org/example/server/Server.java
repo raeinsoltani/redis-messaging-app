@@ -72,11 +72,14 @@ public class Server {
 
     public static void sendGroupMsg(Packet packet){
         HashMap<String, String> group = (HashMap<String, String>) jedis.hgetAll(packet.getTo());
+        System.out.println("retrieved group information form database");
 
         String messages = group.get("messages");
         messages = messages + "!!!!!" + packet.getDateTime().toString() + "@@@@@" + packet.getFrom() + "@@@@@" + packet.getBody();
         System.out.println(messages);
         group.replace("messages", messages);
+        jedis.hset(packet.getTo(), group);
+        System.out.println("uploaded new group messages to database");
 
         broadcast(group.get("members"), packet);
     }

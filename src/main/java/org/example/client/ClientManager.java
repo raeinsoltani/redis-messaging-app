@@ -33,6 +33,24 @@ public class ClientManager {
             listenerThread.start();
             scanner = new Scanner(System.in);
 
+            login();
+
+            while(true){
+                System.out.println("To:\n1)Send Direct Message\n2)Send Group Message\n3)Create Group");
+                switch (scanner.nextLine()){
+                    case "1" -> {
+                        sendDirectMsg();
+                    }
+
+                    case "2" -> {
+                        sendMessageToGroup();
+                    }
+
+                    case "3" -> {
+                        createGroup();
+                    }
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
