@@ -5,11 +5,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Packet implements Serializable {
+
     private String requestType;
 
-    private String fromUsername;
+    private String from;
 
-    private String toUsername;
+    private String to;
 
     private String body;
 
@@ -37,20 +38,20 @@ public class Packet implements Serializable {
         this.body = body;
     }
 
-    public String getFromUsername() {
-        return fromUsername;
+    public String getFrom() {
+        return from;
     }
 
-    public void setFromUsername(String fromUsername) {
-        this.fromUsername = fromUsername;
+    public void setFrom(String from) {
+        this.from = from;
     }
 
-    public String getToUsername() {
-        return toUsername;
+    public String getTo() {
+        return to;
     }
 
-    public void setToUsername(String toUsername) {
-        this.toUsername = toUsername;
+    public void setTo(String to) {
+        this.to = to;
     }
 
     public String getRequestType() {

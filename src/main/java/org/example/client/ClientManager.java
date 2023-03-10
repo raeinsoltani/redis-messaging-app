@@ -41,8 +41,8 @@ public class ClientManager {
                 System.out.println("Write your message:");
                 String body = scanner.nextLine();
                 packet1.setRequestType("DirectMessage");
-                packet1.setFromUsername(username);
-                packet1.setToUsername(toUsername);
+                packet1.setFrom(username);
+                packet1.setTo(toUsername);
                 packet1.setBody(body);
                 outputStream.writeObject(packet1);
             }
@@ -59,7 +59,7 @@ public class ClientManager {
         username = scanner.nextLine();
         Packet packet = new Packet();
         packet.setRequestType("SetUsername");
-        packet.setFromUsername(username);
+        packet.setFrom(username);
         try {
             outputStream.writeObject(packet);
         } catch (IOException e) {
@@ -73,7 +73,7 @@ public class ClientManager {
 
         packet.setRequestType("CreateGroup");
         System.out.println("What is the groups name? ");
-        packet.setToUsername(scanner.nextLine());
+        packet.setTo(scanner.nextLine());
         System.out.println("What is the groups description? (write it in one line)");
         packet.setDescription(scanner.nextLine());
         System.out.println("Who are the members of group? (write ! in an empty line to finish)");
@@ -86,7 +86,7 @@ public class ClientManager {
             members.add(member);
         }
         packet.setMembers(members);
-        packet.setFromUsername(username);
+        packet.setFrom(username);
 
         try {
             outputStream.writeObject(packet);
@@ -100,10 +100,10 @@ public class ClientManager {
         Packet packet = new Packet();
 
         packet.setRequestType("SendGroupMsg");
-        packet.setFromUsername(username);
+        packet.setFrom(username);
 
         System.out.println("enter name of the group you what to send message to: ");
-        packet.setToUsername(scanner.nextLine());
+        packet.setTo(scanner.nextLine());
 
         System.out.println("Please enter your Message: ");
         packet.setBody(scanner.nextLine());

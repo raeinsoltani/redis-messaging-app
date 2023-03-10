@@ -51,8 +51,8 @@ public class UserThread extends Thread{
                         Packet packet = (Packet) objectInput.readObject();
                         switch (packet.getRequestType()) {
                             case "SetUsername" -> {
-                                setUsername(packet.getFromUsername());
-                                System.out.println("client username set as: " + packet.getFromUsername());
+                                setUsername(packet.getFrom());
+                                System.out.println("client username set as: " + packet.getFrom());
                             }
 
                             case "DirectMessage" -> {
@@ -61,6 +61,10 @@ public class UserThread extends Thread{
 
                             case "CreateGroup" ->{
                                 Server.createGroup(packet);
+                            }
+
+                            case "SendGroupMsg" ->{
+                                Server.
                             }
                         }
                     }

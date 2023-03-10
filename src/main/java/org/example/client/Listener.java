@@ -18,10 +18,17 @@ public class Listener implements Runnable{
             try{
                 Packet packet = (Packet) objectInputStream.readObject();
                 switch (packet.getRequestType()){
-                    case "DirectMessage":
-                        System.out.println("Relaying a Message\nform: " + packet.getFromUsername()
-                                + "\nto: " + packet.getToUsername() + "\n\n" + packet.getBody() + "\n");
-                        break;
+
+                    case "DirectMessage" -> {
+                        System.out.println("Relaying a Message\nform: " + packet.getFrom()
+                                + "\nto: " + packet.getTo() + "\n\n" + packet.getBody() + "\n");
+
+                    }
+
+                    case "DisplayGroupMsg" ->{
+                        System.out.println("Group: " + packet.getTo() + "    From: "+ packet.getFrom());
+                        System.out.println(packet.getBody() + "\n");;
+                    }
                 }
             }
             catch (IOException e){

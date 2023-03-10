@@ -6,7 +6,6 @@ import redis.clients.jedis.Jedis;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -49,10 +48,10 @@ public class Server {
 
     public static void sendReceivedMessageToServer(Packet packet){
         for (UserThread client : clients){
-            if (client.getUsername().equals(packet.getToUsername())){
+            if (client.getUsername().equals(packet.getTo())){
                 client.sendReceivedMessageToClientApplication(packet);
-                System.out.println("\nfRelaying a Message\nform: " + packet.getFromUsername()
-                        + "\nto: " + packet.getToUsername() + "\n\n" + packet.getBody() + "\n");
+                System.out.println("\nfRelaying a Message\nform: " + packet.getFrom()
+                        + "\nto: " + packet.getTo() + "\n\n" + packet.getBody() + "\n");
                 break;
             }
         }
@@ -61,14 +60,36 @@ public class Server {
     public static void createGroup(Packet packet){
         HashMap<String, String> group = new HashMap<>();
 
-        group.put("creator", packet.getFromUsername());
+        group.put("creator", packet.getFrom());
         group.put("created_at", packet.getDateTime().toString());
         group.put("description", packet.getDescription());
         group.put("members", String.join(" ", packet.getMembers()));
         group.put("messages", "");
 
-        jedis.hset(packet.getToUsername(), group);
-        System.out.println("Group " + packet.getToUsername() + "created by: " + packet.getFromUsername());
+        jedis.hset(packet.getTo(), group);
+        System.out.println("Group " + packet.getTo() + "created by: " + packet.getFrom());
     }
 
+    public static void sendGroupMsg(Packet packet){
+        HashMap<String, String> group = (HashMap<String, String>) jedis.hgetAll(packet.getTo());
+
+        String messages = group.get("messages");
+        messages = messages + "!!!!!" + packet.getDateTime().toString() + "@@@@@" + packet.getFrom() + "@@@@@" + packet.getBody();
+        System.out.println(messages);
+        group.replace("messages", messages);
+
+
+    }
+
+    public static void broadcast(String members, Packet packet){
+        String[] membersArray = members.split(" ");
+        for (String member : membersArray){
+            for (UserThread client : clients){
+                if (client.getUsername().equals(member)){
+                    packet.setDescription("DisplayGroupMsg");
+                    client.sendReceivedMessageToClientApplication(packet);
+                }
+            }
+        }
+    }
 }
