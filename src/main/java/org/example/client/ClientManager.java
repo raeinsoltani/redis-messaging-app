@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ClientManager {
-    private String ip;
-    private int port;
+    private final String ip;
+    private final int port;
     private String username;
 
     public ClientManager(String ip, int port) {
@@ -36,23 +36,21 @@ public class ClientManager {
             login();
 
             while(true){
-                System.out.println("Switch:\n1)Send Direct Message\n2)Send Group Message\n3)Create Group\n4)Print Chat History\n");
+                System.out.println("Switch:\n1)Send Direct Message\n2)Send Group Message\n3)Create Group\n4)Print Chat History\ne)exit\n");
                 switch (scanner.nextLine()){
-                    case "1" -> {
-                        sendDirectMsg();
-                    }
+                    case "1" -> sendDirectMsg();
 
-                    case "2" -> {
-                        sendMessageToGroup();
-                    }
+                    case "2" -> sendMessageToGroup();
 
-                    case "3" -> {
-                        createGroup();
-                    }
+                    case "3" -> createGroup();
 
                     case "4" ->{
                         printChatHistory();
                         wait(500);
+                    }
+
+                    case "e" -> {
+                        return;
                     }
                 }
             }
@@ -144,9 +142,11 @@ public class ClientManager {
     }
 
     public void printChatHistory(){
-        System.out.println("Do you want to print chat history of a group or direct message?\n" +
-                "1)Direct\n" +
-                "2)Group\n");
+        System.out.println("""
+                Do you want to print chat history of a group or direct message?
+                1)Direct
+                2)Group
+                """);
         scanner = new Scanner(System.in);
 
         switch (scanner.nextLine()){

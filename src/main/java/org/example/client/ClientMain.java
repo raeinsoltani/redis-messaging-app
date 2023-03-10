@@ -1,6 +1,5 @@
 package org.example.client;
 
-import redis.clients.jedis.Jedis;
 
 public class ClientMain {
 

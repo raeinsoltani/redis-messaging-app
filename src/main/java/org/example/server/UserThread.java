@@ -43,57 +43,40 @@ public class UserThread extends Thread{
 
     @Override
     public void run() {
-        Thread receiver = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    while (true){
-                        Packet packet = (Packet) objectInput.readObject();
-                        switch (packet.getRequestType()) {
-                            case "SetUsername" -> {
-                                setUsername(packet.getFrom());
-                                System.out.println("client username set as: " + packet.getFrom());
-                            }
-
-                            case "DirectMessage" -> {
-                                Server.sendReceivedMessageToServer(packet);
-                            }
-
-                            case "CreateGroup" ->{
-                                Server.createGroup(packet);
-                            }
-
-                            case "SendGroupMsg" ->{
-                                Server.sendGroupMsg(packet);
-                            }
-
-                            case "PrintMsgHistoryUser" ->{
-                                Server.printDirectMsgHistory(packet);
-                            }
-
-                            case "PrintMsgHistoryGroup" ->{
-                                Server.printGroupMsgHistory(packet);
-                            }
+        Thread receiver = new Thread(() -> {
+            try {
+                while (true){
+                    Packet packet = (Packet) objectInput.readObject();
+                    switch (packet.getRequestType()) {
+                        case "SetUsername" -> {
+                            setUsername(packet.getFrom());
+                            System.out.println("client username set as: " + packet.getFrom());
                         }
-                    }
 
-                } catch (ClassNotFoundException e){
-                    e.printStackTrace();
-                }
-                catch (SocketException e){
-                    for(UserThread client : Server.getClients()){
-                        if (client.getUsername().equals(username)){
-                            Server.getClients().remove(client);
-                            break;
-                        }
+                        case "DirectMessage" -> Server.sendReceivedMessageToServer(packet);
+
+                        case "CreateGroup" -> Server.createGroup(packet);
+
+                        case "SendGroupMsg" -> Server.sendGroupMsg(packet);
+
+                        case "PrintMsgHistoryUser" -> Server.printDirectMsgHistory(packet);
+
+                        case "PrintMsgHistoryGroup" -> Server.printGroupMsgHistory(packet);
                     }
                 }
-                catch (IOException e){
-                    e.printStackTrace();
+
+            } catch (SocketException e){
+                for(UserThread client : Server.getClients()){
+                    if (client.getUsername().equals(username)){
+                        Server.getClients().remove(client);
+                        break;
+                    }
                 }
+            } catch (ClassNotFoundException | IOException e){
+                e.printStackTrace();
             }
         });
-        receiver.run();
+        receiver.start();
     }
 }
 

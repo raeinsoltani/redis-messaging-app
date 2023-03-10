@@ -14,21 +14,15 @@ public class Packet implements Serializable {
 
     private String body;
 
-    private LocalDateTime dateTime;
+    private final LocalDateTime dateTime;
 
     private ArrayList<String> members;
 
     private String description;
 
-
-
-    public Packet(String requestType) {
-        this.requestType = requestType;
-    }
-
     public Packet(){
         this.dateTime = LocalDateTime.now();
-    };
+    }
 
     public String getBody() {
         return body;

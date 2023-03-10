@@ -22,9 +22,9 @@ public class Server {
         return clients;
     }
 
-    public static void setClients(ConcurrentLinkedDeque<UserThread> clients) {
-        Server.clients = clients;
-    }
+//    public static void setClients(ConcurrentLinkedDeque<UserThread> clients) {
+//        Server.clients = clients;
+//    }
 
     public void startServer(String dbURL, int dbPort) {
 

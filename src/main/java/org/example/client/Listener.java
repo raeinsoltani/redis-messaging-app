@@ -19,15 +19,12 @@ public class Listener implements Runnable{
                 Packet packet = (Packet) objectInputStream.readObject();
                 switch (packet.getRequestType()){
 
-                    case "DirectMessage" -> {
-                        System.out.println("Relaying a Message\nform: " + packet.getFrom()
-                                + "\nto: " + packet.getTo() + "\n\n" + packet.getBody() + "\n");
-
-                    }
+                    case "DirectMessage" -> System.out.println("Relaying a Message\nform: " + packet.getFrom()
+                            + "\nto: " + packet.getTo() + "\n\n" + packet.getBody() + "\n");
 
                     case "SendGroupMsg" ->{
                         System.out.println("Group: " + packet.getTo() + "    From: "+ packet.getFrom());
-                        System.out.println(packet.getBody() + "\n");;
+                        System.out.println(packet.getBody() + "\n");
                     }
 
                     case "PrintMsgHistory" -> {
@@ -43,12 +40,13 @@ public class Listener implements Runnable{
                             System.out.println(msg.split("@@@@@")[2] +  "\n");
                         }
                     }
+
+                    case "return" -> {
+                        return;
+                    }
                 }
             }
-            catch (IOException e){
-                e.printStackTrace();
-            }
-            catch (ClassNotFoundException e){
+            catch (IOException | ClassNotFoundException e){
                 e.printStackTrace();
             }
         }
