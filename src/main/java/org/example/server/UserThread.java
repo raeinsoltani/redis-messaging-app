@@ -33,7 +33,7 @@ public class UserThread extends Thread{
         this.username = username;
     }
 
-    public void sendReceivedMessageToClientApplication(Packet packet){
+    public void server2ClientPacketSender(Packet packet){
         try {
             objectOutput.writeObject(packet);
         } catch (IOException e){
@@ -65,6 +65,10 @@ public class UserThread extends Thread{
 
                             case "SendGroupMsg" ->{
                                 Server.sendGroupMsg(packet);
+                            }
+
+                            case "PrintMsgHistory" ->{
+                                Server.printMsgHistory(packet);
                             }
                         }
                     }

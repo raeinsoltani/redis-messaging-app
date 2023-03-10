@@ -29,6 +29,20 @@ public class Listener implements Runnable{
                         System.out.println("Group: " + packet.getTo() + "    From: "+ packet.getFrom());
                         System.out.println(packet.getBody() + "\n");;
                     }
+
+                    case "PrintMsgHistory" -> {
+                        String[] messages = packet.getBody().split("!!!!!");
+                        boolean condition = true;
+                        for (String msg : messages){
+                            if (condition){
+                                condition = false;
+                                continue;
+                            }
+                            System.out.println("at: " + msg.split("@@@@@")[0]);
+                            System.out.println("from: " + msg.split("@@@@@")[1] + "\n");
+                            System.out.println(msg.split("@@@@@")[2] +  "\n");
+                        }
+                    }
                 }
             }
             catch (IOException e){

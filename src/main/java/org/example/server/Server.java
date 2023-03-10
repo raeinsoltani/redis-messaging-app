@@ -1,11 +1,7 @@
 package org.example.server;
 
 import org.example.common.Packet;
-import redis.clients.jedis.HostAndPort;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPooled;
-import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -64,12 +60,18 @@ public class Server {
     public static void sendReceivedMessageToServer(Packet packet){
         for (UserThread client : clients){
             if (client.getUsername().equals(packet.getTo())){
-                String messages = jedis.get(packet.getTo());
-                messages = messages + "!!!!!" + packet.getDateTime().toString() + "@@@@@" + packet.getFrom() + "@@@@@" + packet.getBody();
+                String messages;
+                if (jedis.get(packet.getTo()) != null){
+                    messages = jedis.get(packet.getTo());
+                    messages = messages + "!!!!!" + packet.getDateTime().toString() + "@@@@@" + packet.getFrom() + "@@@@@" + packet.getBody();
+                }
+                else {
+                    messages = "!!!!!" + packet.getDateTime().toString() + "@@@@@" + packet.getFrom() + "@@@@@" + packet.getBody();
+                }
                 jedis.set(packet.getTo(), messages);
-                client.sendReceivedMessageToClientApplication(packet);
-                System.out.println("\nDirect Message\nform: " + packet.getFrom()
-                        + "\n\n" + packet.getBody() + "\n");
+                client.server2ClientPacketSender(packet);
+//                System.out.println("\nDirect Message\nform: " + packet.getFrom()
+//                        + "\n\n" + packet.getBody() + "\n");
                 System.out.println("Message uploaded to database");
                 break;
             }
@@ -83,12 +85,9 @@ public class Server {
         group.put("created_at", packet.getDateTime().toString());
         group.put("description", packet.getDescription());
         group.put("members", String.join(" ", packet.getMembers()));
-        System.out.println(String.join(" ", packet.getMembers()));
         group.put("messages", "");
 
-        System.out.println("Jedis Hash Set sending");
         jedis.hset(packet.getTo(), group);
-        System.out.println(packet.getTo());
         System.out.println("Group " + packet.getTo() + " created by " + packet.getFrom());
     }
 
@@ -114,9 +113,22 @@ public class Server {
         for (String member : membersArray){
             for (UserThread client : clients){
                 if (client.getUsername().equals(member) && !client.getUsername().equals(packet.getFrom())){
-                    client.sendReceivedMessageToClientApplication(packet);
+                    client.server2ClientPacketSender(packet);
                 }
             }
         }
     }
+
+    public static void printMsgHistory(Packet packet){
+        String msg = jedis.get(packet.getTo());
+        for (UserThread client : clients){
+            if (client.getUsername().equals(packet.getFrom())){
+                Packet newPacket = new Packet();
+                newPacket.setRequestType("PrintMsgHistory");
+                newPacket.setBody(msg);
+                client.server2ClientPacketSender(newPacket);
+            }
+        }
+    }
+
 }

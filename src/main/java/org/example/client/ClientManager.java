@@ -36,7 +36,7 @@ public class ClientManager {
             login();
 
             while(true){
-                System.out.println("Switch:\n1)Send Direct Message\n2)Send Group Message\n3)Create Group\n");
+                System.out.println("Switch:\n1)Send Direct Message\n2)Send Group Message\n3)Create Group\n4)Print Chat History\n");
                 switch (scanner.nextLine()){
                     case "1" -> {
                         sendDirectMsg();
@@ -48,6 +48,11 @@ public class ClientManager {
 
                     case "3" -> {
                         createGroup();
+                    }
+
+                    case "4" ->{
+                        printChatHistory();
+                        wait(500);
                     }
                 }
             }
@@ -136,5 +141,34 @@ public class ClientManager {
             throw new RuntimeException(e);
         }
         System.out.println("Message Sent");
+    }
+
+    public void printChatHistory(){
+        System.out.println("Please enter username or chatID of group you\n" +
+                "what to retrieve information from: ");
+        scanner = new Scanner(System.in);
+        String requestedUser = scanner.nextLine();
+
+        Packet packet = new Packet();
+        packet.setRequestType("PrintMsgHistory");
+        packet.setFrom(username);
+        packet.setTo(requestedUser);
+        try {
+            outputStream.writeObject(packet);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void wait(int ms)
+    {
+        try
+        {
+            Thread.sleep(ms);
+        }
+        catch(InterruptedException ex)
+        {
+            Thread.currentThread().interrupt();
+        }
     }
 }
